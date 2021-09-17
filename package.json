@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "compile": "truffle compile"
+  },
+  "dependencies": {
+    "truffle": "^5.4.10",
+    "truffle-hdwallet-provider": "^1.0.17"
+  },
+  "devDependencies": {
+    "truffle-plugin-verify": "^0.5.8"
+  }
+}
