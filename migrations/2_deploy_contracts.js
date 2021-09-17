@@ -1,5 +1,5 @@
-const Counter = artifacts.require("./Counter.sol");
+const AddressBookWhitelist = artifacts.require("./AddressBookWhitelist.sol");
 
 module.exports = async (deployer) => {
-  await deployer.deploy(Counter, { gas: 5000000 });
+  await deployer.deploy(AddressBookWhitelist, { gas: 5000000 });
 };

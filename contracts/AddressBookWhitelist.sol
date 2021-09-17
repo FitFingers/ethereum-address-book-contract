@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
  * @title Storage
  * @dev Store & retrieve value in a variable
  */
-contract TransferWhitelist {
+contract AddressBookWhitelist {
     uint256 public totalContacts;
     uint256 public securityTimelock;
     uint256 public transferPrice;

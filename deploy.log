@@ -1,0 +1,122 @@
+Compiling your contracts...
+===========================
+✔ Fetching solc version list from solc-bin. Attempt #1
+> Everything is up to date, there is nothing to compile.
+
+
+
+Migrations dry-run (simulation)
+===============================
+> Network name:    'rinkeby-fork'
+> Network id:      4
+> Block gas limit: 29999972 (0x1c9c364)
+
+
+1_initial_migrations.js
+=======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > block number:        9308956
+   > block timestamp:     1631889775
+   > account:             0xe681B4AE322c131178e339AA77427D61509Db891
+   > balance:             1.369902934412840678
+   > gas used:            160384 (0x27280)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000320768 ETH
+
+   -------------------------------------
+   > Total cost:         0.000320768 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'AddressBookWhitelist'
+   --------------------------------
+   > block number:        9308958
+   > block timestamp:     1631889788
+   > account:             0xe681B4AE322c131178e339AA77427D61509Db891
+   > balance:             1.367644166412840678
+   > gas used:            1102070 (0x10d0f6)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00220414 ETH
+
+   -------------------------------------
+   > Total cost:          0.00220414 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.002524908 ETH
+
+
+
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 29970705 (0x1c95111)
+
+
+1_initial_migrations.js
+=======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > transaction hash:    0x1aa14ea5d1debf481c79b292055d376bdd5970d4f5785850237fcefe296dbe8b
+   > Blocks: 2            Seconds: 20
+   > contract address:    0x5296f3D9D18a8f297D846bd7F8BE09e1Eb80f9d0
+   > block number:        9308958
+   > block timestamp:     1631889816
+   > account:             0xe681B4AE322c131178e339AA77427D61509Db891
+   > balance:             1.370047018411073838
+   > gas used:            176684 (0x2b22c)
+   > gas price:           1.00000001 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00017668400176684 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.00017668400176684 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'AddressBookWhitelist'
+   --------------------------------
+   > transaction hash:    0x47548d20a84bc89517f7d4bda9a96f2bcb22627d3912fe04e24deb106f9d456d
+   > Blocks: 1            Seconds: 12
+   > contract address:    0x7eabeD6Fd9A08e4863c1B6300487DcfB2cb2F793
+   > block number:        9308962
+   > block timestamp:     1631889876
+   > account:             0xe681B4AE322c131178e339AA77427D61509Db891
+   > balance:             1.368836534397804228
+   > gas used:            1164770 (0x11c5e2)
+   > gas price:           1.000000011 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00116477001281247 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.00116477001281247 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.00134145401457931 ETH
+
+
+
+Done in 139.77s.
