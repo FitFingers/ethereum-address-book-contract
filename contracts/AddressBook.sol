@@ -3,13 +3,14 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 /**
- * @title Storage
- * @dev Store & retrieve value in a variable
+ * @title Address Book
+ * @dev Store contacts and make transfers
  */
-contract AddressBookWhitelist {
+contract AddressBook {
     uint256 public totalContacts;
     uint256 public securityTimelock;
-    uint256 public transferPrice;
+    uint256 public txCost;
+    uint256 public lastTimelockUpdate;
 
     struct Contact {
         string name;
@@ -18,7 +19,7 @@ contract AddressBookWhitelist {
     }
 
     // Array of Contact structs (contacts in address book)
-    Contact[] public contacts;
+    Contact[] public contacts; // onlyOwner
 
     // Mapping to retrieve Array index from address or name
     mapping(address => uint256) public addressToIndex;
@@ -27,17 +28,18 @@ contract AddressBookWhitelist {
     // Address of the contract owner
     address public owner;
 
-    constructor() {
-        owner = msg.sender;
+    constructor(address _bookOwner) {
+        owner = _bookOwner;
         totalContacts = 0;
-        securityTimelock = 15; // in seconds
-        transferPrice = 0.005 * 10**9 * 10**9; // in ETH
+        securityTimelock = 90; // in seconds
+        txCost = 0.005 * 10**9 * 10**9; // in ETH
+        lastTimelockUpdate = block.timestamp;
     }
 
     // MODIFIERS
 
     // Only the owner of the contract may call
-    modifier useOnlyOwner() {
+    modifier onlyOwner() {
         require(
             msg.sender == owner,
             "Only the contract owner may call this function"
@@ -45,12 +47,10 @@ contract AddressBookWhitelist {
         _;
     }
 
-    // Only permit this transaction if it securityTimelock has elapsed (since contact was added)
-    modifier useContactTimelock(string calldata name) {
-        uint256 date = contacts[nameToIndex[name]].dateAdded;
+    modifier timelockElapsed() {
         require(
-            block.timestamp >= date + securityTimelock,
-            "This contact was added too recently"
+            block.timestamp >= lastTimelockUpdate + securityTimelock,
+            "You must wait for the security timelock to elapse before this is permitted"
         );
         _;
     }
@@ -74,7 +74,7 @@ contract AddressBookWhitelist {
     // find and remove a contact via their address
     function removeContactByAddress(address _address)
         public
-        useOnlyOwner
+        onlyOwner
         returns (string memory removeName)
     {
         uint256 removeIndex = addressToIndex[_address];
@@ -91,7 +91,7 @@ contract AddressBookWhitelist {
     // find and remove a contact via their name
     function removeContactByName(string calldata name)
         public
-        useOnlyOwner
+        onlyOwner
         returns (address removeAddress)
     {
         uint256 removeIndex = nameToIndex[name];
@@ -105,31 +105,59 @@ contract AddressBookWhitelist {
         return removeAddress;
     }
 
+    function readAllContacts()
+        public
+        view
+        onlyOwner
+        returns (Contact[] memory)
+    {
+        Contact[] memory result = new Contact[](totalContacts);
+        for (uint256 i = 0; i < totalContacts; i++) {
+            result[i] = contacts[i];
+        }
+        return result;
+    }
+
+    // UPDATE VARIABLE FUNCTIONS
+
+    function updateTimelock(uint256 duration) public timelockElapsed {
+        securityTimelock = duration;
+        lastTimelockUpdate = block.timestamp;
+    }
+
+    function updateTransactionCost(uint256 newTxCost) public timelockElapsed {
+        txCost = newTxCost;
+    }
+
     // PAYMENT FUNCTIONS
+
     function payContactByName(string calldata name, uint256 sendValue)
         public
         payable
-        useContactTimelock(name)
-        useOnlyOwner
+        onlyOwner
         returns (bool success)
     {
-        address recipient = contacts[nameToIndex[name]].wallet;
-        require(msg.value > transferPrice + sendValue, "Not enough ETH!");
+        Contact memory recipient = contacts[nameToIndex[name]];
+        require(
+            block.timestamp >= recipient.dateAdded + securityTimelock,
+            "This contact was added too recently"
+        );
+        require(msg.value >= txCost + sendValue, "Not enough ETH!");
         (
             bool sent, /*bytes memory data*/
 
-        ) = recipient.call{value: sendValue}("");
+        ) = recipient.wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
         success = true;
         return success;
     }
 
-    function checkBalance() public view useOnlyOwner returns (uint256 amount) {
+    function checkBalance() public view onlyOwner returns (uint256 amount) {
         amount = address(this).balance;
         return amount;
     }
 
-    function withdraw() public useOnlyOwner returns (uint256 amount) {
+    function withdraw() public onlyOwner returns (uint256 amount) {
         amount = checkBalance();
         (
             bool sent, /*data*/

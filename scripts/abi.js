@@ -22,7 +22,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -52,7 +51,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -72,7 +70,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -86,7 +83,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -100,7 +96,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -114,7 +109,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -128,7 +122,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -193,6 +186,36 @@ exports.ABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "readAllContacts",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "wallet",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "dateAdded",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct AddressBookWhitelist.Contact[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -215,7 +238,6 @@ exports.ABI = [
     ],
     stateMutability: "payable",
     type: "function",
-    payable: true,
   },
   {
     inputs: [],
@@ -229,7 +251,6 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
