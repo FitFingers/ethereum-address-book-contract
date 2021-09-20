@@ -2,15 +2,17 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+import "./AddressBookFactory.sol";
+
 /**
  * @title Address Book
  * @dev Store contacts and make transfers
  */
 contract AddressBook {
-    uint256 public totalContacts;
-    uint256 public securityTimelock;
-    uint256 public txCost;
-    uint256 public lastTimelockUpdate;
+    uint256 private _totalContacts;
+    uint256 private _securityTimelock;
+    uint256 private _lastTimelockUpdate;
+    AddressBookFactory private _factory;
 
     struct Contact {
         string name;
@@ -19,21 +21,21 @@ contract AddressBook {
     }
 
     // Array of Contact structs (contacts in address book)
-    Contact[] public contacts; // onlyOwner
+    Contact[] private contacts;
 
     // Mapping to retrieve Array index from address or name
-    mapping(address => uint256) public addressToIndex;
-    mapping(string => uint256) public nameToIndex;
+    mapping(address => uint256) private addressToIndex;
+    mapping(string => uint256) private nameToIndex;
 
-    // Address of the contract owner
+    // Address of the contract owner => TODO: does this need to be public?
     address public owner;
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
-        totalContacts = 0;
-        securityTimelock = 90; // in seconds
-        txCost = 0.005 * 10**9 * 10**9; // in ETH
-        lastTimelockUpdate = block.timestamp;
+        _totalContacts = 0;
+        _securityTimelock = 90; // in seconds
+        _lastTimelockUpdate = block.timestamp;
+        _factory = AddressBookFactory(msg.sender);
     }
 
     // MODIFIERS
@@ -47,9 +49,10 @@ contract AddressBook {
         _;
     }
 
+    // Only permitted after x time (z.B. new contacts can't be paid for at least this amount of time)
     modifier timelockElapsed() {
         require(
-            block.timestamp >= lastTimelockUpdate + securityTimelock,
+            block.timestamp >= _lastTimelockUpdate + _securityTimelock,
             "You must wait for the security timelock to elapse before this is permitted"
         );
         _;
@@ -60,59 +63,35 @@ contract AddressBook {
     // add a user / Contact struct to the contacts Array
     function addContact(string calldata _name, address _address)
         public
-        returns (uint256 createdAt)
+        onlyOwner
     {
         Contact memory person = Contact(_name, _address, block.timestamp);
         contacts.push(person);
-        addressToIndex[_address] = totalContacts;
-        nameToIndex[_name] = totalContacts;
-        totalContacts++;
-        createdAt = block.timestamp;
-        return createdAt;
-    }
-
-    // find and remove a contact via their address
-    function removeContactByAddress(address _address)
-        public
-        onlyOwner
-        returns (string memory removeName)
-    {
-        uint256 removeIndex = addressToIndex[_address];
-        require(removeIndex < totalContacts, "Index is out of range");
-        removeName = contacts[removeIndex].name;
-        contacts[removeIndex] = contacts[contacts.length - 1];
-        addressToIndex[contacts[contacts.length - 1].wallet] = removeIndex;
-        delete addressToIndex[_address];
-        contacts.pop();
-        totalContacts--;
-        return removeName;
+        addressToIndex[_address] = _totalContacts;
+        nameToIndex[_name] = _totalContacts;
+        _totalContacts++;
     }
 
     // find and remove a contact via their name
-    function removeContactByName(string calldata name)
-        public
-        onlyOwner
-        returns (address removeAddress)
-    {
+    function removeContactByName(string calldata name) public onlyOwner {
         uint256 removeIndex = nameToIndex[name];
-        require(removeIndex < totalContacts, "Index is out of range");
-        removeAddress = contacts[removeIndex].wallet;
+        require(removeIndex < _totalContacts, "Index is out of range");
         contacts[removeIndex] = contacts[contacts.length - 1];
         nameToIndex[contacts[contacts.length - 1].name] = removeIndex;
         delete nameToIndex[name];
         contacts.pop();
-        totalContacts--;
-        return removeAddress;
+        _totalContacts--;
     }
 
+    // Get all contact data for this AddressBook
     function readAllContacts()
         public
         view
         onlyOwner
         returns (Contact[] memory)
     {
-        Contact[] memory result = new Contact[](totalContacts);
-        for (uint256 i = 0; i < totalContacts; i++) {
+        Contact[] memory result = new Contact[](_totalContacts);
+        for (uint256 i = 0; i < _totalContacts; i++) {
             result[i] = contacts[i];
         }
         return result;
@@ -120,50 +99,45 @@ contract AddressBook {
 
     // UPDATE VARIABLE FUNCTIONS
 
-    function updateTimelock(uint256 duration) public timelockElapsed {
-        securityTimelock = duration;
-        lastTimelockUpdate = block.timestamp;
-    }
-
-    function updateTransactionCost(uint256 newTxCost) public timelockElapsed {
-        txCost = newTxCost;
+    // Update this user's personal timelock
+    function updateTimelock(uint256 duration) public onlyOwner timelockElapsed {
+        _securityTimelock = duration;
+        _lastTimelockUpdate = block.timestamp;
     }
 
     // PAYMENT FUNCTIONS
 
+    // Get the latest TX cost from the Factory
+    function checkTxCost() public view returns (uint256 _price) {
+        _price = _factory.txCost();
+        return _price;
+    }
+
+    // Transfer ETH to a contact
     function payContactByName(string calldata name, uint256 sendValue)
         public
         payable
         onlyOwner
-        returns (bool success)
     {
         Contact memory recipient = contacts[nameToIndex[name]];
         require(
-            block.timestamp >= recipient.dateAdded + securityTimelock,
+            block.timestamp >= recipient.dateAdded + _securityTimelock,
             "This contact was added too recently"
         );
-        require(msg.value >= txCost + sendValue, "Not enough ETH!");
-        (
-            bool sent, /*bytes memory data*/
-
-        ) = recipient.wallet.call{value: sendValue}("");
+        require(msg.value >= _factory.txCost() + sendValue, "Not enough ETH!");
+        (bool sent, ) = recipient.wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
-        success = true;
-        return success;
     }
 
+    // Leaving these two functions in in case of accidental transfer of money into contract
     function checkBalance() public view onlyOwner returns (uint256 amount) {
         amount = address(this).balance;
         return amount;
     }
 
-    function withdraw() public onlyOwner returns (uint256 amount) {
-        amount = checkBalance();
-        (
-            bool sent, /*data*/
-
-        ) = msg.sender.call{value: amount}("");
+    function withdraw() public onlyOwner {
+        uint256 amount = checkBalance();
+        (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "There was a problem while withdrawing");
-        return amount;
     }
 }
