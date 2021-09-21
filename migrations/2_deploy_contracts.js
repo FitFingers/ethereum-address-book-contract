@@ -1,5 +1,5 @@
-const AddressBookWhitelist = artifacts.require("./AddressBookWhitelist.sol");
+const AddressBookFactory = artifacts.require("./AddressBookFactory.sol");
 
 module.exports = async (deployer) => {
-  await deployer.deploy(AddressBookWhitelist, { gas: 5000000 });
+  await deployer.deploy(AddressBookFactory, { gas: 5000000 });
 };

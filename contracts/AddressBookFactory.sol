@@ -31,7 +31,7 @@ contract AddressBookFactory {
         return userData;
     }
 
-    // Address of the contract owner => TODO: does this need to be public?
+    // Address of the contract owner => required for frontend auth
     address public owner;
 
     constructor() {

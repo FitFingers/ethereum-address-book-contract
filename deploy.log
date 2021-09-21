@@ -9,7 +9,7 @@ Migrations dry-run (simulation)
 ===============================
 > Network name:    'rinkeby-fork'
 > Network id:      4
-> Block gas limit: 29999972 (0x1c9c364)
+> Block gas limit: 29970705 (0x1c95111)
 
 
 1_initial_migrations.js
@@ -17,10 +17,10 @@ Migrations dry-run (simulation)
 
    Deploying 'Migrations'
    ----------------------
-   > block number:        9308956
-   > block timestamp:     1631889775
+   > block number:        9327463
+   > block timestamp:     1632167777
    > account:             0xe681B4AE322c131178e339AA77427D61509Db891
-   > balance:             1.369902934412840678
+   > balance:             1.301175114156044399
    > gas used:            160384 (0x27280)
    > gas price:           2 gwei
    > value sent:          0 ETH
@@ -33,25 +33,25 @@ Migrations dry-run (simulation)
 2_deploy_contracts.js
 =====================
 
-   Deploying 'AddressBookWhitelist'
-   --------------------------------
-   > block number:        9308958
-   > block timestamp:     1631889788
+   Deploying 'AddressBookFactory'
+   ------------------------------
+   > block number:        9327465
+   > block timestamp:     1632167807
    > account:             0xe681B4AE322c131178e339AA77427D61509Db891
-   > balance:             1.367644166412840678
-   > gas used:            1102070 (0x10d0f6)
+   > balance:             1.296181906156044399
+   > gas used:            2469290 (0x25adaa)
    > gas price:           2 gwei
    > value sent:          0 ETH
-   > total cost:          0.00220414 ETH
+   > total cost:          0.00493858 ETH
 
    -------------------------------------
-   > Total cost:          0.00220414 ETH
+   > Total cost:          0.00493858 ETH
 
 
 Summary
 =======
 > Total deployments:   2
-> Final cost:          0.002524908 ETH
+> Final cost:          0.005259348 ETH
 
 
 
@@ -69,54 +69,54 @@ Starting migrations...
 
    Deploying 'Migrations'
    ----------------------
-   > transaction hash:    0x1aa14ea5d1debf481c79b292055d376bdd5970d4f5785850237fcefe296dbe8b
-   > Blocks: 2            Seconds: 20
-   > contract address:    0x5296f3D9D18a8f297D846bd7F8BE09e1Eb80f9d0
-   > block number:        9308958
-   > block timestamp:     1631889816
+   > transaction hash:    0x280f8d96368efe106cb84320356f46320d036d6ffaefd7837a6131930bd0a7f2
+   > Blocks: 2            Seconds: 16
+   > contract address:    0x331BE7b5055631fEAc5d0f9de74363E5DCd4c325
+   > block number:        9327466
+   > block timestamp:     1632167841
    > account:             0xe681B4AE322c131178e339AA77427D61509Db891
-   > balance:             1.370047018411073838
+   > balance:             1.301319198154454243
    > gas used:            176684 (0x2b22c)
-   > gas price:           1.00000001 gwei
+   > gas price:           1.000000009 gwei
    > value sent:          0 ETH
-   > total cost:          0.00017668400176684 ETH
+   > total cost:          0.000176684001590156 ETH
 
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:     0.00017668400176684 ETH
+   > Total cost:     0.000176684001590156 ETH
 
 
 2_deploy_contracts.js
 =====================
 
-   Deploying 'AddressBookWhitelist'
-   --------------------------------
-   > transaction hash:    0x47548d20a84bc89517f7d4bda9a96f2bcb22627d3912fe04e24deb106f9d456d
-   > Blocks: 1            Seconds: 12
-   > contract address:    0x7eabeD6Fd9A08e4863c1B6300487DcfB2cb2F793
-   > block number:        9308962
-   > block timestamp:     1631889876
+   Deploying 'AddressBookFactory'
+   ------------------------------
+   > transaction hash:    0x93956cd5f0ada38a567a43009318a62d804880cd5a71ad1ce4e3aa70f5cf732c
+   > Blocks: 0            Seconds: 8
+   > contract address:    0xd772C3f556E659c5e5B7df843f28c85da01AAe16
+   > block number:        9327468
+   > block timestamp:     1632167871
    > account:             0xe681B4AE322c131178e339AA77427D61509Db891
-   > balance:             1.368836534397804228
-   > gas used:            1164770 (0x11c5e2)
-   > gas price:           1.000000011 gwei
+   > balance:             1.298611394130084007
+   > gas used:            2662090 (0x289eca)
+   > gas price:           1.000000009 gwei
    > value sent:          0 ETH
-   > total cost:          0.00116477001281247 ETH
+   > total cost:          0.00266209002395881 ETH
 
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:     0.00116477001281247 ETH
+   > Total cost:     0.00266209002395881 ETH
 
 
 Summary
 =======
 > Total deployments:   2
-> Final cost:          0.00134145401457931 ETH
+> Final cost:          0.002838774025548966 ETH
 
 
 
-Done in 139.77s.
+Done in 133.62s.

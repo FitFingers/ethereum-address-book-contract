@@ -97,6 +97,36 @@ contract AddressBook {
         return result;
     }
 
+    function readTotalContacts()
+        public
+        view
+        onlyOwner
+        returns (uint256 totalContacts)
+    {
+        totalContacts = _totalContacts;
+        return totalContacts;
+    }
+
+    function readSecurityTimelock()
+        public
+        view
+        onlyOwner
+        returns (uint256 securityTimelock)
+    {
+        securityTimelock = _securityTimelock;
+        return securityTimelock;
+    }
+
+    function readLastTimelockUpdate()
+        public
+        view
+        onlyOwner
+        returns (uint256 lastTimelockUpdate)
+    {
+        lastTimelockUpdate = _lastTimelockUpdate;
+        return lastTimelockUpdate;
+    }
+
     // UPDATE VARIABLE FUNCTIONS
 
     // Update this user's personal timelock
