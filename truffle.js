@@ -17,6 +17,11 @@ const rinkebyNodeUrl = `https://eth-rinkeby.alchemyapi.io/v2/${NODE_API_KEY}`;
 
 module.exports = {
   networks: {
+    development: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*",
+    },
     rinkeby: {
       provider: function () {
         return new HDWalletProvider(MNEMONIC, rinkebyNodeUrl);
