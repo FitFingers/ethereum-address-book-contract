@@ -74,6 +74,15 @@ contract AddressBookFactory {
         _;
     }
 
+    // Only permitted for customers
+    modifier customerOnly() {
+        require(
+            addressToIndex[msg.sender] > 0,
+            "You must have an account in order to call this function"
+        );
+        _;
+    }
+
     // ADDRESS BOOK MANAGEMENT
 
     // Create a new AddressBook struct for this user
@@ -90,6 +99,15 @@ contract AddressBookFactory {
         totalAddressBooks++;
         contractAddress = address(newBook);
         return contractAddress;
+    }
+
+    // Remove this user's AddressBook
+    function removeAddressBook(address _address) public customerOnly {
+        AddressBook latestNewUser = addressBooks[totalAddressBooks];
+        addressBooks[addressToIndex[_address]] = latestNewUser;
+        addressToIndex[_address] = 0;
+        addressBooks.pop();
+        totalAddressBooks--;
     }
 
     // UPDATE VARIABLE FUNCTIONS
