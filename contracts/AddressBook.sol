@@ -11,6 +11,7 @@ import "./AddressBookFactory.sol";
 contract AddressBook {
     uint256 private _securityTimelock;
     uint256 private _lastTimelockUpdate;
+    address public owner;
     AddressBookFactory private _factory;
 
     struct Contact {
@@ -23,11 +24,7 @@ contract AddressBook {
     Contact[] private contacts;
 
     // Mapping to retrieve Array index from address or name
-    mapping(address => uint256) private addressToIndex;
     mapping(string => uint256) private nameToIndex;
-
-    // Address of the contract owner => TODO: does this need to be public?
-    address public owner;
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
@@ -64,7 +61,6 @@ contract AddressBook {
         onlyOwner
     {
         Contact memory person = Contact(_name, _address, block.timestamp);
-        addressToIndex[_address] = contacts.length;
         nameToIndex[_name] = contacts.length;
         contacts.push(person);
     }
