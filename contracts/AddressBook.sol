@@ -9,15 +9,12 @@ import "./AddressBookFactory.sol";
  * @dev Store contacts and make transfers
  */
 contract AddressBook {
-    uint256 private _securityTimelock;
-    uint256 private _lastTimelockUpdate;
     address public owner;
     AddressBookFactory private _factory;
 
     struct Contact {
         string name;
         address wallet;
-        uint256 dateAdded;
     }
 
     // Array of Contact structs (contacts in address book)
@@ -28,8 +25,6 @@ contract AddressBook {
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
-        _securityTimelock = 90; // in seconds
-        _lastTimelockUpdate = block.timestamp;
         _factory = AddressBookFactory(msg.sender);
     }
 
@@ -44,15 +39,6 @@ contract AddressBook {
         _;
     }
 
-    // Only permitted after x time (z.B. new contacts can't be paid for at least this amount of time)
-    modifier timelockElapsed() {
-        require(
-            block.timestamp >= _lastTimelockUpdate + _securityTimelock,
-            "You must wait for the security timelock to elapse before this is permitted"
-        );
-        _;
-    }
-
     // CONTACT MANAGEMENT
 
     // add a user / Contact struct to the contacts Array
@@ -60,7 +46,7 @@ contract AddressBook {
         public
         onlyOwner
     {
-        Contact memory person = Contact(_name, _address, block.timestamp);
+        Contact memory person = Contact(_name, _address);
         contacts[_name] = person;
         contactsArray.push(person);
     }
@@ -92,23 +78,7 @@ contract AddressBook {
         return totalContacts;
     }
 
-    function readSecurityTimelock()
-        public
-        view
-        onlyOwner
-        returns (uint256 securityTimelock)
-    {
-        securityTimelock = _securityTimelock;
-        return securityTimelock;
-    }
-
     // UPDATE VARIABLE FUNCTIONS
-
-    // Update this user's personal timelock
-    function updateTimelock(uint256 duration) public onlyOwner timelockElapsed {
-        _securityTimelock = duration;
-        _lastTimelockUpdate = block.timestamp;
-    }
 
     // PAYMENT FUNCTIONS
 
@@ -124,10 +94,6 @@ contract AddressBook {
         payable
         onlyOwner
     {
-        require(
-            block.timestamp >= contacts[name].dateAdded + _securityTimelock,
-            "This contact was added too recently"
-        );
         require(msg.value >= _factory.txCost() + sendValue, "Not enough ETH!");
         (bool sent, ) = contacts[name].wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
