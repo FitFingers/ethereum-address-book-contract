@@ -102,16 +102,6 @@ contract AddressBook {
         return securityTimelock;
     }
 
-    function readLastTimelockUpdate()
-        public
-        view
-        onlyOwner
-        returns (uint256 lastTimelockUpdate)
-    {
-        lastTimelockUpdate = _lastTimelockUpdate;
-        return lastTimelockUpdate;
-    }
-
     // UPDATE VARIABLE FUNCTIONS
 
     // Update this user's personal timelock
