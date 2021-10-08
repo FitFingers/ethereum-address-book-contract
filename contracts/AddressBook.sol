@@ -18,7 +18,7 @@ contract AddressBook {
     Contact[] private contactsArray;
 
     // Mapping to retrieve Array index from address or name
-    mapping(bytes32 => Contact) private contacts;
+    mapping(bytes32 => address) private contacts;
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
@@ -39,9 +39,8 @@ contract AddressBook {
 
     // add a user / Contact struct to the contacts Array
     function addContact(bytes32 _name, address _address) public onlyOwner {
-        Contact memory person = Contact(_name, _address);
-        contacts[_name] = person;
-        contactsArray.push(person);
+        contacts[_name] = _address;
+        contactsArray.push(Contact(_name, _address));
     }
 
     // find and remove a contact via their name
@@ -80,7 +79,7 @@ contract AddressBook {
         onlyOwner
     {
         require(msg.value >= 33000000000000 + sendValue, "Not enough ETH!");
-        (bool sent, ) = contacts[name].wallet.call{value: sendValue}("");
+        (bool sent, ) = contacts[name].call{value: sendValue}("");
         require(sent, "Failed to send Ether");
     }
 
