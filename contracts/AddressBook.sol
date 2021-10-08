@@ -21,10 +21,11 @@ contract AddressBook {
     }
 
     // Array of Contact structs (contacts in address book)
-    Contact[] private contacts;
+    // Contact[] private contacts;
+    string[] private names;
 
     // Mapping to retrieve Array index from address or name
-    mapping(string => uint256) private nameToIndex;
+    mapping(string => Contact) private contacts;
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
@@ -61,18 +62,15 @@ contract AddressBook {
         onlyOwner
     {
         Contact memory person = Contact(_name, _address, block.timestamp);
-        nameToIndex[_name] = contacts.length;
-        contacts.push(person);
+        contacts[_name] = person;
+        names.push(_name);
     }
 
     // find and remove a contact via their name
     function removeContactByName(string calldata name) public onlyOwner {
-        uint256 removeIndex = nameToIndex[name];
-        require(removeIndex < contacts.length, "Index is out of range");
-        contacts[removeIndex] = contacts[contacts.length - 1];
-        nameToIndex[contacts[contacts.length - 1].name] = removeIndex;
-        delete nameToIndex[name];
-        contacts.pop();
+        // contacts[name] = new Contact(); // TODO: which is better: reinit, or delete?
+        delete contacts[name];
+        // names. // TODO: how to remove contact / address without index?
     }
 
     // Get all contact data for this AddressBook
@@ -80,11 +78,11 @@ contract AddressBook {
         public
         view
         onlyOwner
-        returns (Contact[] memory)
+        returns (Contact[] memory result)
     {
-        Contact[] memory result = new Contact[](contacts.length);
-        for (uint256 i = 0; i < contacts.length; i++) {
-            result[i] = contacts[i];
+        result = new Contact[](names.length);
+        for (uint256 i = 0; i < names.length; i++) {
+            result[i] = contacts[names[i]];
         }
         return result;
     }
@@ -95,7 +93,7 @@ contract AddressBook {
         onlyOwner
         returns (uint256 totalContacts)
     {
-        totalContacts = contacts.length;
+        totalContacts = names.length; // TODO: this won't work without remove function
         return totalContacts;
     }
 
@@ -141,7 +139,8 @@ contract AddressBook {
         payable
         onlyOwner
     {
-        Contact memory recipient = contacts[nameToIndex[name]];
+        // TODO: is it better to do address(Contact) ?
+        Contact memory recipient = contacts[name];
         require(
             block.timestamp >= recipient.dateAdded + _securityTimelock,
             "This contact was added too recently"
