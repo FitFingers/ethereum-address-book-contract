@@ -2,15 +2,13 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "./AddressBookFactory.sol";
-
 /**
  * @title Address Book
  * @dev Store contacts and make transfers
  */
 contract AddressBook {
     address public owner;
-    AddressBookFactory private _factory;
+    uint256 public txCost = 33000000000000;
 
     struct Contact {
         string name;
@@ -25,7 +23,6 @@ contract AddressBook {
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
-        _factory = AddressBookFactory(msg.sender);
     }
 
     // MODIFIERS
@@ -84,7 +81,7 @@ contract AddressBook {
 
     // Get the latest TX cost from the Factory
     function checkTxCost() public view returns (uint256 _price) {
-        _price = _factory.txCost();
+        _price = txCost;
         return _price;
     }
 
@@ -94,7 +91,7 @@ contract AddressBook {
         payable
         onlyOwner
     {
-        require(msg.value >= _factory.txCost() + sendValue, "Not enough ETH!");
+        require(msg.value >= txCost + sendValue, "Not enough ETH!");
         (bool sent, ) = contacts[name].wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
     }
