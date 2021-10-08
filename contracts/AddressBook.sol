@@ -21,8 +21,7 @@ contract AddressBook {
     }
 
     // Array of Contact structs (contacts in address book)
-    // Contact[] private contacts;
-    string[] private names;
+    Contact[] private contactsArray;
 
     // Mapping to retrieve Array index from address or name
     mapping(string => Contact) private contacts;
@@ -63,28 +62,23 @@ contract AddressBook {
     {
         Contact memory person = Contact(_name, _address, block.timestamp);
         contacts[_name] = person;
-        names.push(_name);
+        contactsArray.push(person);
     }
 
     // find and remove a contact via their name
     function removeContactByName(string calldata name) public onlyOwner {
-        // contacts[name] = new Contact(); // TODO: which is better: reinit, or delete?
         delete contacts[name];
-        // names. // TODO: how to remove contact / address without index?
     }
 
     // Get all contact data for this AddressBook
-    function readAllContacts()
+    function readContactArray()
         public
         view
         onlyOwner
-        returns (Contact[] memory result)
+        returns (Contact[] memory _contacts)
     {
-        result = new Contact[](names.length);
-        for (uint256 i = 0; i < names.length; i++) {
-            result[i] = contacts[names[i]];
-        }
-        return result;
+        _contacts = contactsArray;
+        return _contacts;
     }
 
     function readTotalContacts()
@@ -93,7 +87,7 @@ contract AddressBook {
         onlyOwner
         returns (uint256 totalContacts)
     {
-        totalContacts = names.length; // TODO: this won't work without remove function
+        totalContacts = contactsArray.length; // TODO: this won't work without remove function
         return totalContacts;
     }
 
