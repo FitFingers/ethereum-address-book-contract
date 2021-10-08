@@ -10,7 +10,6 @@ import "./AddressBook.sol";
  */
 contract AddressBookFactory {
     uint256 public accountOpenCost;
-    uint256 public txCost;
     address public owner;
 
     mapping(address => AddressBook) private addressBooks;
@@ -18,7 +17,6 @@ contract AddressBookFactory {
     constructor() {
         owner = msg.sender;
         accountOpenCost = 0.00025 * 10**9 * 10**9; // in ETH
-        txCost = 0.0001 * 10**9 * 10**9; // in ETH
     }
 
     // MODIFIERS
@@ -58,11 +56,6 @@ contract AddressBookFactory {
     // Update the price to open an account here
     function updateAccountOpenCost(uint256 _accountOpenCost) public onlyOwner {
         accountOpenCost = _accountOpenCost;
-    }
-
-    // Update the price to interact with this contract
-    function updateTransactionCost(uint256 _txCost) public onlyOwner {
-        txCost = _txCost;
     }
 
     // PAYMENT FUNCTIONS
