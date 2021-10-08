@@ -66,6 +66,7 @@ contract AddressBook {
     }
 
     // find and remove a contact via their name
+    // TODO: must remove contact from array as well!
     function removeContactByName(string calldata name) public onlyOwner {
         delete contacts[name];
     }
@@ -144,15 +145,8 @@ contract AddressBook {
         require(sent, "Failed to send Ether");
     }
 
-    // Leaving these two functions in in case of accidental transfer of money into contract
-    function checkBalance() public view onlyOwner returns (uint256 amount) {
-        amount = address(this).balance;
-        return amount;
-    }
-
     function withdraw() public onlyOwner {
-        uint256 amount = checkBalance();
-        (bool sent, ) = msg.sender.call{value: amount}("");
+        (bool sent, ) = msg.sender.call{value: address(this).balance}("");
         require(sent, "There was a problem while withdrawing");
     }
 }
