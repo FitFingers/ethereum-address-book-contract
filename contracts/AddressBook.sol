@@ -10,7 +10,7 @@ contract AddressBook {
     address public owner;
 
     struct Contact {
-        string name;
+        bytes32 name;
         address wallet;
     }
 
@@ -18,7 +18,7 @@ contract AddressBook {
     Contact[] private contactsArray;
 
     // Mapping to retrieve Array index from address or name
-    mapping(string => Contact) private contacts;
+    mapping(bytes32 => Contact) private contacts;
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
@@ -38,10 +38,7 @@ contract AddressBook {
     // CONTACT MANAGEMENT
 
     // add a user / Contact struct to the contacts Array
-    function addContact(string calldata _name, address _address)
-        public
-        onlyOwner
-    {
+    function addContact(bytes32 _name, address _address) public onlyOwner {
         Contact memory person = Contact(_name, _address);
         contacts[_name] = person;
         contactsArray.push(person);
@@ -49,7 +46,7 @@ contract AddressBook {
 
     // find and remove a contact via their name
     // TODO: must remove contact from array as well!
-    function removeContactByName(string calldata name) public onlyOwner {
+    function removeContactByName(bytes32 name) public onlyOwner {
         delete contacts[name];
     }
 
@@ -70,16 +67,14 @@ contract AddressBook {
         onlyOwner
         returns (uint256 totalContacts)
     {
-        totalContacts = contactsArray.length; // TODO: this won't work without remove function
+        totalContacts = contactsArray.length; // TODO: this won't work correctly without remove function
         return totalContacts;
     }
-
-    // UPDATE VARIABLE FUNCTIONS
 
     // PAYMENT FUNCTIONS
 
     // Transfer ETH to a contact
-    function payContactByName(string calldata name, uint256 sendValue)
+    function payContactByName(bytes32 name, uint256 sendValue)
         public
         payable
         onlyOwner
