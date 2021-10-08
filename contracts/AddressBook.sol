@@ -9,7 +9,6 @@ import "./AddressBookFactory.sol";
  * @dev Store contacts and make transfers
  */
 contract AddressBook {
-    uint256 private _totalContacts;
     uint256 private _securityTimelock;
     uint256 private _lastTimelockUpdate;
     AddressBookFactory private _factory;
@@ -32,7 +31,6 @@ contract AddressBook {
 
     constructor(address _bookOwner) {
         owner = _bookOwner;
-        _totalContacts = 0;
         _securityTimelock = 90; // in seconds
         _lastTimelockUpdate = block.timestamp;
         _factory = AddressBookFactory(msg.sender);
@@ -66,21 +64,19 @@ contract AddressBook {
         onlyOwner
     {
         Contact memory person = Contact(_name, _address, block.timestamp);
+        addressToIndex[_address] = contacts.length;
+        nameToIndex[_name] = contacts.length;
         contacts.push(person);
-        addressToIndex[_address] = _totalContacts;
-        nameToIndex[_name] = _totalContacts;
-        _totalContacts++;
     }
 
     // find and remove a contact via their name
     function removeContactByName(string calldata name) public onlyOwner {
         uint256 removeIndex = nameToIndex[name];
-        require(removeIndex < _totalContacts, "Index is out of range");
+        require(removeIndex < contacts.length, "Index is out of range");
         contacts[removeIndex] = contacts[contacts.length - 1];
         nameToIndex[contacts[contacts.length - 1].name] = removeIndex;
         delete nameToIndex[name];
         contacts.pop();
-        _totalContacts--;
     }
 
     // Get all contact data for this AddressBook
@@ -90,8 +86,8 @@ contract AddressBook {
         onlyOwner
         returns (Contact[] memory)
     {
-        Contact[] memory result = new Contact[](_totalContacts);
-        for (uint256 i = 0; i < _totalContacts; i++) {
+        Contact[] memory result = new Contact[](contacts.length);
+        for (uint256 i = 0; i < contacts.length; i++) {
             result[i] = contacts[i];
         }
         return result;
@@ -103,7 +99,7 @@ contract AddressBook {
         onlyOwner
         returns (uint256 totalContacts)
     {
-        totalContacts = _totalContacts;
+        totalContacts = contacts.length;
         return totalContacts;
     }
 
