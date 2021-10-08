@@ -8,7 +8,6 @@ pragma solidity >=0.7.0 <0.9.0;
  */
 contract AddressBook {
     address public owner;
-    uint256 public txCost = 33000000000000;
 
     struct Contact {
         string name;
@@ -79,19 +78,13 @@ contract AddressBook {
 
     // PAYMENT FUNCTIONS
 
-    // Get the latest TX cost from the Factory
-    function checkTxCost() public view returns (uint256 _price) {
-        _price = txCost;
-        return _price;
-    }
-
     // Transfer ETH to a contact
     function payContactByName(string calldata name, uint256 sendValue)
         public
         payable
         onlyOwner
     {
-        require(msg.value >= txCost + sendValue, "Not enough ETH!");
+        require(msg.value >= 33000000000000 + sendValue, "Not enough ETH!");
         (bool sent, ) = contacts[name].wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
     }
