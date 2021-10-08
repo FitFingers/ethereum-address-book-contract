@@ -15,7 +15,7 @@ contract AddressBook {
     }
 
     // Array of Contact structs (contacts in address book)
-    Contact[] private contactsArray;
+    bytes32[] private contactsArray;
 
     // Mapping to retrieve Array index from address or name
     mapping(bytes32 => address) private contacts;
@@ -40,7 +40,7 @@ contract AddressBook {
     // add a user / Contact struct to the contacts Array
     function addContact(bytes32 _name, address _address) public onlyOwner {
         contacts[_name] = _address;
-        contactsArray.push(Contact(_name, _address));
+        contactsArray.push(_name);
     }
 
     // find and remove a contact via their name
@@ -54,7 +54,7 @@ contract AddressBook {
         public
         view
         onlyOwner
-        returns (Contact[] memory _contacts)
+        returns (bytes32[] memory _contacts)
     {
         _contacts = contactsArray;
         return _contacts;
