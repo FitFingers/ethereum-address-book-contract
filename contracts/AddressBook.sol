@@ -134,14 +134,12 @@ contract AddressBook {
         payable
         onlyOwner
     {
-        // TODO: is it better to do address(Contact) ?
-        Contact memory recipient = contacts[name];
         require(
-            block.timestamp >= recipient.dateAdded + _securityTimelock,
+            block.timestamp >= contacts[name].dateAdded + _securityTimelock,
             "This contact was added too recently"
         );
         require(msg.value >= _factory.txCost() + sendValue, "Not enough ETH!");
-        (bool sent, ) = recipient.wallet.call{value: sendValue}("");
+        (bool sent, ) = contacts[name].wallet.call{value: sendValue}("");
         require(sent, "Failed to send Ether");
     }
 
