@@ -9,31 +9,16 @@ import "./AddressBook.sol";
  * @dev Create an address book to store contacts and make transfers
  */
 contract AddressBookFactory {
-    uint256 public totalAddressBooks;
     uint256 public accountOpenCost;
     uint256 public txCost;
-
-    // Take user address, return index of AddressBook => used to fetch data on F/E
-    mapping(address => AddressBook) private addressBooks;
-
-    // Return this user's Address Book contract address. Default is 0x0000000000000000000000000000000000000000
-    function fetchAddressBook() public view returns (AddressBook userData) {
-        userData = addressBooks[msg.sender];
-        return userData;
-    }
-
-    // Address of the contract owner => required for frontend auth
     address public owner;
+
+    mapping(address => AddressBook) private addressBooks;
 
     constructor() {
         owner = msg.sender;
-        totalAddressBooks = 0;
         accountOpenCost = 0.00025 * 10**9 * 10**9; // in ETH
         txCost = 0.0001 * 10**9 * 10**9; // in ETH
-
-        // first address book belongs to owner;
-        addressBooks[msg.sender] = new AddressBook(msg.sender);
-        totalAddressBooks++;
     }
 
     // MODIFIERS
@@ -49,6 +34,12 @@ contract AddressBookFactory {
 
     // ADDRESS BOOK MANAGEMENT
 
+    // Return this user's Address Book contract address
+    function fetchAddressBook() public view returns (AddressBook userData) {
+        userData = addressBooks[msg.sender];
+        return userData;
+    }
+
     // Create a new AddressBook struct for this user
     function createAddressBook()
         public
@@ -58,7 +49,6 @@ contract AddressBookFactory {
         require(msg.value >= accountOpenCost, "Not enough ETH");
         AddressBook newBook = new AddressBook(msg.sender);
         addressBooks[msg.sender] = newBook;
-        totalAddressBooks++;
         contractAddress = address(newBook);
         return contractAddress;
     }
